@@ -1,0 +1,33 @@
+@use '../utils/' as *;
+
+/*** RESET CSS ***/
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/*** BASE ***/
+
+body {
+  font-family: $font-primary;
+  margin: 0;
+}
+
+.no-scroll {
+  overflow: hidden;
+}
+
+/*** SCREEN READER ***/
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

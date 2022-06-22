@@ -1,0 +1,87 @@
+@use 'variables' as *;
+
+@mixin focusable($offset: $focus-offset) {
+  /* Supprime le bord gris par défaut */
+  outline: 0;
+  position: relative;
+
+  &:focus::after {
+    content: '';
+
+    border: solid $focus-border-size $color-primary;
+    border-radius: $offset;
+    outline: none;
+
+    position: absolute;
+    top: -$offset;
+    bottom: -$offset;
+    left: -$offset;
+    right: -$offset;
+  }
+}
+
+@mixin focusable-circle($offset: $focus-offset) {
+  /* Supprime le bord gris par défaut */
+  outline: 0;
+  position: relative;
+
+  &:focus::after {
+    content: '';
+
+    border: solid $focus-border-size $color-primary;
+    border-radius: 100%;
+    outline: none;
+
+    position: absolute;
+    top: -$offset;
+    bottom: -$offset;
+    left: -$offset;
+    right: -$offset;
+  }
+}
+
+@mixin focusable-block($round: $border-radius) {
+  &:focus {
+    outline: solid $focus-border-size $color-tertiary;
+    border-radius: $round;
+    z-index: 1;
+  }
+}
+
+@mixin focusable-inset($width: $focus-border-size) {
+  &:focus {
+    box-shadow: inset 0 0 0 $width $color-tertiary;
+  }
+}
+
+@mixin focusable-img($offset: $focus-offset) {
+  &:focus {
+    padding: $offset;
+
+    border: solid $focus-border-size $color-primary;
+    border-radius: $offset;
+
+    outline: none;
+  }
+}
+
+@mixin focusable-button {
+  &:focus {
+    outline: 0;
+    position: relative;
+
+    &::after {
+      content: '';
+
+      border: solid $focus-border-size $background-primary;
+      border-radius: 8px;
+
+      outline: none;
+      position: absolute;
+      top: -4px;
+      bottom: -4px;
+      left: -4px;
+      right: -4px;
+    }
+  }
+}
