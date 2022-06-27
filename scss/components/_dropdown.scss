@@ -1,0 +1,42 @@
+@use '../utils/' as *;
+
+.dropdown {
+  &::after {
+    content: '';
+    width: 13px;
+    height: 13px;
+
+    background: no-repeat center url('/assets/images/arrowDown.svg');
+    background-size: contain;
+    transform: rotate(0deg);
+    transition: transform 0.3s;
+
+    position: absolute;
+    top: 22px;
+    right: 20px;
+  }
+  &.expanded::after {
+    transform: rotate(-180deg);
+  }
+  &--blue {
+    background-color: $color-blue;
+  }
+  &--green {
+    background-color: $color-green;
+  }
+  &--red {
+    background-color: $color-red;
+  }
+
+  line-height: 40px;
+  padding: 0.5em 1em;
+  padding-right: 4em;
+  margin-right: 1em;
+
+  font-size: 14px;
+  color: white;
+  background: #3282f7;
+  border-radius: $border-radius;
+
+  display: inline-flex;
+}

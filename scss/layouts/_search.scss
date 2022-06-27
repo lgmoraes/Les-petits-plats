@@ -1,0 +1,34 @@
+@use '../utils/' as *;
+
+.search {
+  height: 60px;
+  margin: 16px 0;
+
+  &__input {
+    &:focus {
+      background-color: $color-accent;
+      border-color: $color-accent;
+      box-shadow: none;
+    }
+
+    height: auto;
+    padding-left: 1.3em;
+
+    color: rgba($color: #000000, $alpha: 0.25);
+    background-color: $color-accent;
+    border: none;
+  }
+  .input-group-text {
+    &::after {
+      content: '';
+      width: 30px;
+      height: 30px;
+
+      background: no-repeat center url('/assets/images/magnify.svg');
+      background-size: contain;
+    }
+    
+    border: 0;
+    background-color: $color-accent;
+  }
+}

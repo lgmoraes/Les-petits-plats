@@ -1,0 +1,57 @@
+@use '../utils/' as *;
+
+.cards {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+.card {
+  width: $card-width;
+  border: none;
+  flex-grow: 1;
+
+  &__img {
+    width: 100%;
+    height: 160px;
+
+    background-color: #c7bebe;
+  }
+  &__body {
+    background-color: $color-accent;
+  }
+  &__title {
+    margin: 0;
+    font-size: 21px;
+    font-weight: bold;
+  }
+  &__duration {
+    &::before {
+      content: '';
+      width: 24px;
+      height: 24px;
+      margin-right: 7px;
+
+      background: no-repeat center url('/assets/images/time.svg');
+      background-size: contain;
+
+      display: inline-block;
+    }
+
+    padding-left: 0;
+
+    font-size: 18px;
+    font-weight: bold;
+    text-align: right;
+
+    display: flex;
+    justify-content: flex-end;
+  }
+  &__recipe {
+    margin-top: 16px;
+  }
+  &__ingredients,
+  &__description {
+    font-size: 11px;
+  }
+}
