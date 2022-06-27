@@ -4,8 +4,6 @@
   margin: 23px 0;
   font-weight: bold;
 
-  cursor: pointer;
-
   &__tags {
     margin: 1em 0;
   }
@@ -31,6 +29,7 @@
     color: white;
     border-radius: $border-radius;
     background-color: $color-blue;
+    cursor: pointer;
 
     display: inline-block;
     position: relative;
