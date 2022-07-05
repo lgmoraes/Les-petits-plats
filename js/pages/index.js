@@ -42,6 +42,14 @@ async function init() {
     appliances[latinize(recipe.appliance)] = recipe.appliance
   })
 
+  /* CARDS */
+  recipes.forEach((recipe) => {
+    const recipeCard = new RecipeCard(recipe).create()
+
+    recipeCards[recipe.id] = recipeCard
+    document.querySelector('.cards').appendChild(recipeCard)
+  })
+
   /* RECHERCHE PAR TAG */
   const dropdownIngredientsItems = document.querySelector(
     '#dropdown_ingredients .dropdown__items'

@@ -5,6 +5,8 @@ export default class RecipeCard {
 
   create() {
     const article = document.createElement('article')
+    const descriptionLimit = 150
+
     article.className = 'card'
 
     let ingredientsDOM = ''
@@ -15,16 +17,20 @@ export default class RecipeCard {
       if (unit.length > 3) unit = ' ' + unit
 
       ingredientsDOM += ing.quantity
-        ? `<b>${ing.name}:</b> ${ing.quantity}${unit}<br />`
-        : `<b>${ing.name}</b><br />`
+        ? `<div class="card__ingredient">
+            <b>${ing.ingredient}:</b> ${ing.quantity}${unit}
+          </div>`
+        : `<div class="card__ingredient">
+            <b>${ing.ingredient}</b>
+          </div>`
     })
 
     article.innerHTML = `
       <div class="card__img card-img-top"></div>
       <div class="card__body card-body">
         <div class="row">
-          <div class="col-8">
-            <h2 class="card__title">${this._recipe.name}</h2>
+          <div class="card__title col-8">
+            <h2>${this._recipe.name}</h2>
           </div>
           <div class="card__duration col-4">
             ${this._recipe.time} min
@@ -35,7 +41,13 @@ export default class RecipeCard {
             ${ingredientsDOM}
           </div>
           <div class="card__description col-6">
-            ${this._recipe.description}
+            ${
+              this._recipe.description.length < descriptionLimit
+                ? this._recipe.description
+                : this._recipe.description
+                    .substring(0, descriptionLimit)
+                    .concat('...')
+            }
           </div>
         </div>
       </div>
