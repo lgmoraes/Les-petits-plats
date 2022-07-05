@@ -35,6 +35,13 @@
     position: relative;
   }
   &__list {
+    height: 68px;
     margin: 1em 0;
+    
+    z-index: 1;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
   }
 }

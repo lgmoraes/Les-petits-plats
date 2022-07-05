@@ -85,3 +85,15 @@
     }
   }
 }
+
+@mixin media-breakpoint-down($breakpoint) {
+  @media screen and (max-width: (map-get($breakpoints, $breakpoint) - 0.02)) {
+    @content;
+  }
+}
+
+@mixin media-breakpoint-between($min, $max) {
+  @media screen and (min-width: map-get($breakpoints, $min)) and (max-width: (map-get($breakpoints, $max) - 0.02)) {
+    @content;
+  }
+}

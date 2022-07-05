@@ -1,6 +1,7 @@
 import '../../scss/main.scss'
 import API from '../api'
 import Recipe from '../models/Recipe'
+import RecipeCard from '../templates/RecipeCard'
 import { latinize } from '../utils/functions'
 
 init()
@@ -13,11 +14,14 @@ const ingredients = {}
 const appliances = {}
 const ustensils = {}
 
-document
-  .querySelectorAll('.dropdown')
-  .forEach((dropdown) =>
-    dropdown.addEventListener('click', (e) => toggleDropdown(e.target))
-  )
+document.querySelectorAll('.dropdown').forEach((dropdown) =>
+  dropdown.addEventListener('click', (e) => {
+    const el = e.target
+
+    if (el.classList.contains('dropdown__item')) addTag(el)
+    else toggleDropdown(e.target)
+  })
+)
 
 async function init() {
   /* INITIALISATION DES DONNÉES */
@@ -37,6 +41,39 @@ async function init() {
 
     appliances[latinize(recipe.appliance)] = recipe.appliance
   })
+
+  /* RECHERCHE PAR TAG */
+  const dropdownIngredientsItems = document.querySelector(
+    '#dropdown_ingredients .dropdown__items'
+  )
+  const dropdownAppliancesItems = document.querySelector(
+    '#dropdown_appliances .dropdown__items'
+  )
+  const dropdownUstensilsItems = document.querySelector(
+    '#dropdown_ustensils .dropdown__items'
+  )
+
+  for (const i in ingredients) {
+    const ingredientDOM = document.createElement('div')
+    ingredientDOM.className = 'dropdown__item'
+    ingredientDOM.innerHTML = ingredients[i]
+
+    dropdownIngredientsItems.append(ingredientDOM)
+  }
+  for (const i in appliances) {
+    const applianceDOM = document.createElement('div')
+    applianceDOM.className = 'dropdown__item'
+    applianceDOM.innerHTML = appliances[i]
+
+    dropdownAppliancesItems.append(applianceDOM)
+  }
+  for (const i in ustensils) {
+    const ustensilDOM = document.createElement('div')
+    ustensilDOM.className = 'dropdown__item'
+    ustensilDOM.innerHTML = ustensils[i]
+
+    dropdownUstensilsItems.append(ustensilDOM)
+  }
 }
 
 export function getData() {
@@ -44,5 +81,15 @@ export function getData() {
 }
 
 function toggleDropdown(el) {
+  const currentExpanded = document.querySelector('.dropdown.expanded')
+
+  if (currentExpanded && currentExpanded !== el) {
+    currentExpanded.classList.remove('expanded')
+  }
+
   el.classList.toggle('expanded')
+}
+
+function addTag(el) {
+  console.log(`ADD TAG : ${el.innerHTML}`)
 }
