@@ -14,14 +14,21 @@ const ingredients = {}
 const appliances = {}
 const ustensils = {}
 
-document.querySelectorAll('.dropdown').forEach((dropdown) =>
-  dropdown.addEventListener('click', (e) => {
-    const el = e.target
+document.querySelectorAll('.dropdown input').forEach((input) => {
+  input.value = '' // Réinitialise les valeurs lors de rechargement de la page
 
-    if (el.classList.contains('dropdown__item')) addTag(el)
-    else toggleDropdown(e.target)
+  input.addEventListener('click', (e) => {
+    const el = e.target
+    const dropdown = el.parentElement
+
+    if (dropdown.classList.contains('dropdown__item')) addTag(dropdown)
+    else toggleDropdown(dropdown)
   })
-)
+  input.addEventListener('input', (e) => {
+    const el = e.target
+    updateDropdown(el)
+  })
+})
 
 async function init() {
   /* INITIALISATION DES DONNÉES */
@@ -96,6 +103,19 @@ function toggleDropdown(el) {
   }
 
   el.classList.toggle('expanded')
+}
+
+function updateDropdown(input) {
+  const dropdown = input.parentElement
+  const tagList = dropdown.querySelector('.dropdown__items')
+  const searchValue = latinize(input.value).toLowerCase().trim()
+
+  Array.from(tagList.children).forEach((item) => {
+    const text = latinize(item.innerHTML).toLowerCase()
+
+    if (text.indexOf(searchValue) === -1) item.classList.add('hidden')
+    else item.classList.remove('hidden')
+  })
 }
 
 function addTag(el) {

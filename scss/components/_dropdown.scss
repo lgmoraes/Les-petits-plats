@@ -46,7 +46,6 @@
   max-height: 54px;
   line-height: 40px;
   padding: 0.5em 1em;
-  padding-right: 4em;
   margin-right: 1em;
   margin-bottom: 1em;
 
@@ -54,17 +53,38 @@
   color: white;
   background: #3282f7;
   border-radius: $border-radius;
-  cursor: pointer;
   overflow: hidden;
   transition: 0.3s;
 
   display: inline-block;
 
+  input {
+    &:focus {
+      outline: none;
+      &::placeholder {
+        opacity: 0.5;
+      }
+    }
+    &::placeholder {
+      opacity: 1;
+    }
+
+    width: 100%;
+
+    color: white;
+    background: none;
+    border: none;
+    font-weight: bold;
+    font-size: 13px;
+
+    /* Bypass la hitbox de la flèche */
+    z-index: 1;
+    position: relative;
+  }
   &__items {
     width: 520px;
     max-width: 470px;
     max-height: 350px;
-    margin-right: -2.5em;
 
     overflow: auto;
     transition: 0.3s;
@@ -76,6 +96,9 @@
   &__item {
     &:hover {
       background-color: rgba($color: #000000, $alpha: 0.2);
+    }
+    &.hidden {
+      display: none;
     }
 
     width: 150px;
