@@ -13,12 +13,12 @@
 
   &__img {
     width: 100%;
-    height: $card-height / 2;
+    height: calc($card-height / 2);
 
     background-color: #c7bebe;
   }
   &__body {
-    height: $card-height / 2;
+    height: calc($card-height / 2);
 
     background-color: $color-accent;
     border-bottom-left-radius: 0.25rem;

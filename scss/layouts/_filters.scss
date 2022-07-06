@@ -6,6 +6,10 @@
 
   &__tags {
     margin: 1em 0;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
   }
   &__tag {
     &::after {
@@ -20,6 +24,7 @@
       top: 7px;
       right: 1em;
     }
+    @include colorOption;
 
     padding: 0.5em 1em;
     padding-right: 3.5em;
@@ -28,7 +33,6 @@
     font-size: 13px;
     color: white;
     border-radius: $border-radius;
-    background-color: $color-blue;
     cursor: pointer;
 
     display: inline-block;

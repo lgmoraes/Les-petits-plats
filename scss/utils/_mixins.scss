@@ -1,5 +1,17 @@
 @use 'variables' as *;
 
+@mixin colorOption {
+  &--blue {
+    background-color: $color-blue;
+  }
+  &--green {
+    background-color: $color-green;
+  }
+  &--red {
+    background-color: $color-red;
+  }
+}
+
 @mixin focusable($offset: $focus-offset) {
   /* Supprime le bord gris par défaut */
   outline: 0;

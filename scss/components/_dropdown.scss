@@ -32,15 +32,7 @@
       margin-right: $dropdown-width;
     }
   }
-  &--blue {
-    background-color: $color-blue;
-  }
-  &--green {
-    background-color: $color-green;
-  }
-  &--red {
-    background-color: $color-red;
-  }
+  @include colorOption;
 
   max-width: $dropdown-width;
   max-height: 54px;

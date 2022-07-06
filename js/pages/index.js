@@ -2,7 +2,7 @@ import '../../scss/main.scss'
 import API from '../api'
 import Recipe from '../models/Recipe'
 import RecipeCard from '../templates/RecipeCard'
-import { latinize } from '../utils/functions'
+import { latinize, removeElement } from '../utils/functions'
 
 init()
 
@@ -14,19 +14,26 @@ const ingredients = {}
 const appliances = {}
 const ustensils = {}
 
-document.querySelectorAll('.dropdown input').forEach((input) => {
+document.querySelector('.filters__tags').addEventListener('click', (e) => {
+  if (e.target.classList.contains('filters__tag')) removeTag(e.target)
+})
+
+document.querySelectorAll('.dropdown').forEach((dropdown) => {
+  const input = dropdown.querySelector('input')
+
+  /* TAGS */
+  dropdown.addEventListener('click', (e) => {
+    if (e.target.classList.contains('dropdown__item')) addTag(e.target)
+  })
+
+  /* INPUTS */
   input.value = '' // Réinitialise les valeurs lors de rechargement de la page
 
-  input.addEventListener('click', (e) => {
-    const el = e.target
-    const dropdown = el.parentElement
-
-    if (dropdown.classList.contains('dropdown__item')) addTag(dropdown)
-    else toggleDropdown(dropdown)
+  input.addEventListener('click', () => {
+    toggleDropdown(dropdown)
   })
-  input.addEventListener('input', (e) => {
-    const el = e.target
-    updateDropdown(el)
+  input.addEventListener('input', () => {
+    updateDropdown(input)
   })
 })
 
@@ -118,6 +125,17 @@ function updateDropdown(input) {
   })
 }
 
-function addTag(el) {
-  console.log(`ADD TAG : ${el.innerHTML}`)
+function addTag(tagElement) {
+  const newTag = document.createElement('div')
+  const color = tagElement.parentElement.parentElement.dataset.color
+
+  newTag.innerHTML = tagElement.innerHTML
+  newTag.classList.add('filters__tag')
+  newTag.classList.add(`filters__tag--${color}`)
+
+  document.querySelector('.filters__tags').appendChild(newTag)
+}
+
+function removeTag(tagElement) {
+  removeElement(tagElement)
 }

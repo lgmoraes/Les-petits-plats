@@ -10,6 +10,10 @@ export function minmax(n, min, max) {
   return Math.min(Math.max(n, min), max)
 }
 
+export function removeElement(el) {
+  el.parentElement.removeChild(el)
+}
+
 export function latinize(str) {
   let result = ''
 
