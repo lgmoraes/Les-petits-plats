@@ -2,14 +2,19 @@ import '../../scss/main.scss'
 import API from '../api'
 import Recipe from '../models/Recipe'
 import RecipeCard from '../templates/RecipeCard'
-import { latinize, removeElement } from '../utils/functions'
+import { normalize, removeElement } from '../utils/functions'
 
 init()
 
 let data
-const recipes = []
+const recipes = [] // Liste de toutes les recettes
+const recipesResult = {} // Recettes correspondants à la recherche
+const recipesFiltered = {} // recipesResult filtré par tags
 const recipeCards = {} // Associe l'id d'une recette avec sa recipeCard
 
+const filters = {} // Tags appliqués
+
+// Liste de tous les tags (ceux indisponibles sont simplement caché)
 const ingredients = {}
 const appliances = {}
 const ustensils = {}
@@ -47,13 +52,13 @@ async function init() {
     recipes.push(recipe)
 
     recipe.ingredients.forEach((ing) => {
-      ingredients[latinize(ing.ingredient)] = ing.ingredient
+      ingredients[normalize(ing.ingredient)] = ing.ingredient
     })
     recipe.ustensils.forEach((ust) => {
-      ustensils[latinize(ust)] = ust
+      ustensils[normalize(ust)] = ust
     })
 
-    appliances[latinize(recipe.appliance)] = recipe.appliance
+    appliances[normalize(recipe.appliance)] = recipe.appliance
   })
 
   /* CARDS */
@@ -102,6 +107,7 @@ export function getData() {
   return data
 }
 
+/* DROPDOWN */
 function toggleDropdown(el) {
   const currentExpanded = document.querySelector('.dropdown.expanded')
 
@@ -115,27 +121,61 @@ function toggleDropdown(el) {
 function updateDropdown(input) {
   const dropdown = input.parentElement
   const tagList = dropdown.querySelector('.dropdown__items')
-  const searchValue = latinize(input.value).toLowerCase().trim()
+  const searchValue = normalize(input.value)
 
   Array.from(tagList.children).forEach((item) => {
-    const text = latinize(item.innerHTML).toLowerCase()
+    const text = normalize(item.innerHTML)
 
     if (text.indexOf(searchValue) === -1) item.classList.add('hidden')
     else item.classList.remove('hidden')
   })
 }
 
+/* TAGS */
 function addTag(tagElement) {
   const newTag = document.createElement('div')
-  const color = tagElement.parentElement.parentElement.dataset.color
+  const dropdown = tagElement.parentElement.parentElement
+  const value = tagElement.innerHTML
+  const color = dropdown.dataset.color
+  const type = dropdown.dataset.filter
 
-  newTag.innerHTML = tagElement.innerHTML
+  newTag.innerHTML = value
   newTag.classList.add('filters__tag')
   newTag.classList.add(`filters__tag--${color}`)
 
   document.querySelector('.filters__tags').appendChild(newTag)
+  filters[value] = { type }
+  updateRecipes()
 }
 
 function removeTag(tagElement) {
+  delete filters[tagElement.innerHTML]
   removeElement(tagElement)
+  updateRecipes()
+}
+
+/* RECIPES */
+function updateRecipes() {
+  recipes.forEach((recipe) => {
+    let result = true
+
+    for (const name in filters) {
+      const filter = filters[name]
+      const value = name
+
+      if (filter.type === 'appliance') {
+        if (recipe.appliance !== value) result = false
+      } else if (filter.type === 'ingredients') {
+        const find = recipe.ingredients.find((i) => i.ingredient === value)
+        if (find === undefined) result = false
+      } else if (filter.type === 'ustensils') {
+        if (recipe.ustensils.includes(value) === false) result = false
+      } else {
+        console.warn('Filtre inconnu : ' + name)
+      }
+    }
+    result
+      ? recipeCards[recipe.id].classList.remove('hidden')
+      : recipeCards[recipe.id].classList.add('hidden')
+  })
 }

@@ -14,6 +14,10 @@ export function removeElement(el) {
   el.parentElement.removeChild(el)
 }
 
+export function normalize(str) {
+  return latinize(str.trim()).toLowerCase()
+}
+
 export function latinize(str) {
   let result = ''
 

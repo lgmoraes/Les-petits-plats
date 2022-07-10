@@ -7,6 +7,10 @@
   gap: 30px;
 }
 .card {
+  &.hidden {
+    display: none;
+  }
+
   width: $card-width;
   border: none;
   flex-grow: 1;
