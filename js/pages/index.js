@@ -14,10 +14,14 @@ const recipeCards = {} // Associe l'id d'une recette avec sa recipeCard
 
 const filters = {} // Tags appliqués
 
-// Liste de tous les tags (ceux indisponibles sont simplement caché)
-const ingredients = {}
-const appliances = {}
-const ustensils = {}
+// Liste de tous les tags
+const tags = {
+  ingredients: {},
+  appliances: {},
+  ustensils: {},
+}
+const tagsResult = {} // Tags existant dans la recherche
+const tagFiltered = {} // Tags restants après le filterage par tags
 
 document.querySelector('.filters__tags').addEventListener('click', (e) => {
   if (e.target.classList.contains('filters__tag')) removeTag(e.target)
@@ -52,13 +56,13 @@ async function init() {
     recipes.push(recipe)
 
     recipe.ingredients.forEach((ing) => {
-      ingredients[normalize(ing.ingredient)] = ucfirst(ing.ingredient)
+      tags.ingredients[normalize(ing.ingredient)] = ucfirst(ing.ingredient)
     })
     recipe.ustensils.forEach((ust) => {
-      ustensils[normalize(ust)] = ucfirst(ust)
+      tags.ustensils[normalize(ust)] = ucfirst(ust)
     })
 
-    appliances[normalize(recipe.appliance)] = ucfirst(recipe.appliance)
+    tags.appliances[normalize(recipe.appliance)] = ucfirst(recipe.appliance)
   })
 
   /* CARDS */
@@ -69,7 +73,7 @@ async function init() {
     document.querySelector('.cards').appendChild(recipeCard)
   })
 
-  /* RECHERCHE PAR TAG */
+  /* DROPDOWNS */
   const dropdownIngredientsItems = document.querySelector(
     '#dropdown_ingredients .dropdown__items'
   )
@@ -80,24 +84,24 @@ async function init() {
     '#dropdown_ustensils .dropdown__items'
   )
 
-  for (const i in ingredients) {
+  for (const i in tags.ingredients) {
     const ingredientDOM = document.createElement('div')
     ingredientDOM.className = 'dropdown__item'
-    ingredientDOM.innerHTML = ingredients[i]
+    ingredientDOM.innerHTML = tags.ingredients[i]
 
     dropdownIngredientsItems.append(ingredientDOM)
   }
-  for (const i in appliances) {
+  for (const i in tags.appliances) {
     const applianceDOM = document.createElement('div')
     applianceDOM.className = 'dropdown__item'
-    applianceDOM.innerHTML = appliances[i]
+    applianceDOM.innerHTML = tags.appliances[i]
 
     dropdownAppliancesItems.append(applianceDOM)
   }
-  for (const i in ustensils) {
+  for (const i in tags.ustensils) {
     const ustensilDOM = document.createElement('div')
     ustensilDOM.className = 'dropdown__item'
-    ustensilDOM.innerHTML = ustensils[i]
+    ustensilDOM.innerHTML = tags.ustensils[i]
 
     dropdownUstensilsItems.append(ustensilDOM)
   }
