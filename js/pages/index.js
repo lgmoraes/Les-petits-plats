@@ -2,7 +2,7 @@ import '../../scss/main.scss'
 import API from '../api'
 import Recipe from '../models/Recipe'
 import RecipeCard from '../templates/RecipeCard'
-import { normalize, removeElement } from '../utils/functions'
+import { normalize, ucfirst, removeElement } from '../utils/functions'
 
 init()
 
@@ -52,13 +52,13 @@ async function init() {
     recipes.push(recipe)
 
     recipe.ingredients.forEach((ing) => {
-      ingredients[normalize(ing.ingredient)] = ing.ingredient
+      ingredients[normalize(ing.ingredient)] = ucfirst(ing.ingredient)
     })
     recipe.ustensils.forEach((ust) => {
-      ustensils[normalize(ust)] = ust
+      ustensils[normalize(ust)] = ucfirst(ust)
     })
 
-    appliances[normalize(recipe.appliance)] = recipe.appliance
+    appliances[normalize(recipe.appliance)] = ucfirst(recipe.appliance)
   })
 
   /* CARDS */
