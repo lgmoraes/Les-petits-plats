@@ -130,7 +130,7 @@ function updateDropdown(input) {
 function addTag(tagElement) {
   const newTag = document.createElement('div')
   const dropdown = tagElement.parentElement.parentElement
-  const value = tagElement.innerHTML
+  const value = normalize(tagElement.innerHTML)
   const color = dropdown.dataset.color
   const type = dropdown.dataset.filter
 
@@ -166,6 +166,7 @@ function getTagsFromRecipes(recipes) {
     tags.appliances[normalize(recipe.appliance)] = ucfirst(recipe.appliance)
   })
 
+  console.log(tags)
   return tags
 }
 
@@ -177,13 +178,17 @@ function updateRecipes() {
     for (const name in filters) {
       const filter = filters[name]
       const value = name
+
       if (filter.type === 'appliance') {
-        if (recipe.appliance !== value) result = false
+        if (normalize(recipe.appliance) !== value) result = false
       } else if (filter.type === 'ingredients') {
-        const find = recipe.ingredients.find((i) => i.ingredient === value)
+        const find = recipe.ingredients.find(
+          (i) => normalize(i.ingredient) === value
+        )
         if (find === undefined) result = false
       } else if (filter.type === 'ustensils') {
-        if (recipe.ustensils.includes(value) === false) result = false
+        if (recipe.ustensils.map(normalize).includes(value) === false)
+          result = false
       } else {
         console.warn('Filtre inconnu : ' + name)
       }
