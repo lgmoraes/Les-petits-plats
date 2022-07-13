@@ -147,7 +147,7 @@ function addTag(tagElement) {
   const color = dropdown.dataset.color
   const type = dropdown.dataset.filter
 
-  newTag.innerHTML = value
+  newTag.innerHTML = tagElement.innerHTML
   newTag.classList.add('filters__tag')
   newTag.classList.add(`filters__tag--${color}`)
 
@@ -160,7 +160,8 @@ function addTag(tagElement) {
 }
 
 function removeTag(tagElement) {
-  delete filters[tagElement.innerHTML]
+  const tagName = normalize(tagElement.innerHTML)
+  delete filters[tagName]
   removeElement(tagElement)
   updateRecipesFiltered()
   updateTagsFiltered()
