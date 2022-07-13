@@ -153,7 +153,9 @@ function addTag(tagElement) {
 
   document.querySelector('.filters__tags').appendChild(newTag)
   filters[value] = { type }
+
   updateRecipesFiltered()
+  updateTagsFiltered()
   updateCards()
 }
 
@@ -161,15 +163,18 @@ function removeTag(tagElement) {
   delete filters[tagElement.innerHTML]
   removeElement(tagElement)
   updateRecipesFiltered()
+  updateTagsFiltered()
   updateCards()
 }
 
 function updateTagsResult() {
   tagsResult = Object.assign({}, getTagsFromRecipes(recipesResult))
+  updateTagsFiltered()
 }
 
 function updateTagsFiltered() {
   tagsFiltered = Object.assign({}, getTagsFromRecipes(recipesFiltered))
+  updateDropdowns()
 }
 
 function getTagsFromRecipes(recipes) {
