@@ -51,19 +51,10 @@ async function init() {
   data = await API.getRecipes()
 
   data.forEach((recipeData) => {
-    const recipe = new Recipe(recipeData)
-
-    recipes.push(recipe)
-
-    recipe.ingredients.forEach((ing) => {
-      tags.ingredients[normalize(ing.ingredient)] = ucfirst(ing.ingredient)
-    })
-    recipe.ustensils.forEach((ust) => {
-      tags.ustensils[normalize(ust)] = ucfirst(ust)
-    })
-
-    tags.appliances[normalize(recipe.appliance)] = ucfirst(recipe.appliance)
+    recipes.push(new Recipe(recipeData))
   })
+
+  Object.assign(tags, getTagsFromRecipes(recipes))
 
   /* CARDS */
   recipes.forEach((recipe) => {
@@ -158,6 +149,26 @@ function removeTag(tagElement) {
   updateRecipes()
 }
 
+function getTagsFromRecipes(recipes) {
+  const tags = {
+    ingredients: {},
+    appliances: {},
+    ustensils: {},
+  }
+
+  recipes.forEach((recipe) => {
+    recipe.ingredients.forEach((ing) => {
+      tags.ingredients[normalize(ing.ingredient)] = ucfirst(ing.ingredient)
+    })
+    recipe.ustensils.forEach(
+      (ust) => (tags.ustensils[normalize(ust)] = ucfirst(ust))
+    )
+    tags.appliances[normalize(recipe.appliance)] = ucfirst(recipe.appliance)
+  })
+
+  return tags
+}
+
 /* RECIPES */
 function updateRecipes() {
   recipes.forEach((recipe) => {
@@ -166,7 +177,6 @@ function updateRecipes() {
     for (const name in filters) {
       const filter = filters[name]
       const value = name
-
       if (filter.type === 'appliance') {
         if (recipe.appliance !== value) result = false
       } else if (filter.type === 'ingredients') {
