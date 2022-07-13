@@ -8,8 +8,8 @@ init()
 
 let data
 const recipes = [] // Liste de toutes les recettes
-const recipesResult = {} // Recettes correspondants à la recherche
-const recipesFiltered = {} // recipesResult filtré par tags
+let recipesResult = {} // Recettes correspondants à la recherche
+let recipesFiltered = {} // recipesResult filtré par tags
 const recipeCards = {} // Associe l'id d'une recette avec sa recipeCard
 
 const filters = {} // Tags appliqués
@@ -20,8 +20,8 @@ const tags = {
   appliances: {},
   ustensils: {},
 }
-const tagsResult = {} // Tags existant dans la recherche
-const tagFiltered = {} // Tags restants après le filterage par tags
+let tagsResult = {} // Tags existant dans la recherche
+let tagsFiltered = {} // Tags restants après le filterage par tags
 
 document.querySelector('.filters__tags').addEventListener('click', (e) => {
   if (e.target.classList.contains('filters__tag')) removeTag(e.target)
@@ -42,7 +42,7 @@ document.querySelectorAll('.dropdown').forEach((dropdown) => {
     toggleDropdown(dropdown)
   })
   input.addEventListener('input', () => {
-    updateDropdown(input)
+    updateDropdownFromInput(input)
   })
 })
 
@@ -53,8 +53,12 @@ async function init() {
   data.forEach((recipeData) => {
     recipes.push(new Recipe(recipeData))
   })
+  recipesResult = Object.assign([], recipes)
+  recipesFiltered = Object.assign([], recipes)
 
   Object.assign(tags, getTagsFromRecipes(recipes))
+  tagsResult = Object.assign({}, tags)
+  tagsFiltered = Object.assign({}, tags)
 
   /* CARDS */
   recipes.forEach((recipe) => {
@@ -65,37 +69,7 @@ async function init() {
   })
 
   /* DROPDOWNS */
-  const dropdownIngredientsItems = document.querySelector(
-    '#dropdown_ingredients .dropdown__items'
-  )
-  const dropdownAppliancesItems = document.querySelector(
-    '#dropdown_appliances .dropdown__items'
-  )
-  const dropdownUstensilsItems = document.querySelector(
-    '#dropdown_ustensils .dropdown__items'
-  )
-
-  for (const i in tags.ingredients) {
-    const ingredientDOM = document.createElement('div')
-    ingredientDOM.className = 'dropdown__item'
-    ingredientDOM.innerHTML = tags.ingredients[i]
-
-    dropdownIngredientsItems.append(ingredientDOM)
-  }
-  for (const i in tags.appliances) {
-    const applianceDOM = document.createElement('div')
-    applianceDOM.className = 'dropdown__item'
-    applianceDOM.innerHTML = tags.appliances[i]
-
-    dropdownAppliancesItems.append(applianceDOM)
-  }
-  for (const i in tags.ustensils) {
-    const ustensilDOM = document.createElement('div')
-    ustensilDOM.className = 'dropdown__item'
-    ustensilDOM.innerHTML = tags.ustensils[i]
-
-    dropdownUstensilsItems.append(ustensilDOM)
-  }
+  updateDropdowns()
 }
 
 export function getData() {
@@ -113,7 +87,7 @@ function toggleDropdown(el) {
   el.classList.toggle('expanded')
 }
 
-function updateDropdown(input) {
+function updateDropdownFromInput(input) {
   const dropdown = input.parentElement
   const tagList = dropdown.querySelector('.dropdown__items')
   const searchValue = normalize(input.value)
@@ -124,6 +98,45 @@ function updateDropdown(input) {
     if (text.indexOf(searchValue) === -1) item.classList.add('hidden')
     else item.classList.remove('hidden')
   })
+}
+
+function updateDropdowns() {
+  const dropdownIngredientsItems = document.querySelector(
+    '#dropdownIngredients .dropdown__items'
+  )
+  const dropdownAppliancesItems = document.querySelector(
+    '#dropdownAppliances .dropdown__items'
+  )
+  const dropdownUstensilsItems = document.querySelector(
+    '#dropdownUstensils .dropdown__items'
+  )
+
+  /* RESET */
+  dropdownIngredientsItems.innerHTML = ''
+  dropdownAppliancesItems.innerHTML = ''
+  dropdownUstensilsItems.innerHTML = ''
+
+  for (const i in tagsFiltered.ingredients) {
+    const ingredientDOM = document.createElement('div')
+    ingredientDOM.className = 'dropdown__item'
+    ingredientDOM.innerHTML = tagsFiltered.ingredients[i]
+
+    dropdownIngredientsItems.append(ingredientDOM)
+  }
+  for (const i in tagsFiltered.appliances) {
+    const applianceDOM = document.createElement('div')
+    applianceDOM.className = 'dropdown__item'
+    applianceDOM.innerHTML = tagsFiltered.appliances[i]
+
+    dropdownAppliancesItems.append(applianceDOM)
+  }
+  for (const i in tagsFiltered.ustensils) {
+    const ustensilDOM = document.createElement('div')
+    ustensilDOM.className = 'dropdown__item'
+    ustensilDOM.innerHTML = tagsFiltered.ustensils[i]
+
+    dropdownUstensilsItems.append(ustensilDOM)
+  }
 }
 
 /* TAGS */
@@ -140,13 +153,23 @@ function addTag(tagElement) {
 
   document.querySelector('.filters__tags').appendChild(newTag)
   filters[value] = { type }
-  updateRecipes()
+  updateRecipesFiltered()
+  updateCards()
 }
 
 function removeTag(tagElement) {
   delete filters[tagElement.innerHTML]
   removeElement(tagElement)
-  updateRecipes()
+  updateRecipesFiltered()
+  updateCards()
+}
+
+function updateTagsResult() {
+  tagsResult = Object.assign({}, getTagsFromRecipes(recipesResult))
+}
+
+function updateTagsFiltered() {
+  tagsFiltered = Object.assign({}, getTagsFromRecipes(recipesFiltered))
 }
 
 function getTagsFromRecipes(recipes) {
@@ -166,13 +189,14 @@ function getTagsFromRecipes(recipes) {
     tags.appliances[normalize(recipe.appliance)] = ucfirst(recipe.appliance)
   })
 
-  console.log(tags)
   return tags
 }
 
 /* RECIPES */
-function updateRecipes() {
-  recipes.forEach((recipe) => {
+function updateRecipesFiltered() {
+  recipesFiltered = []
+
+  recipesResult.forEach((recipe) => {
     let result = true
 
     for (const name in filters) {
@@ -193,8 +217,13 @@ function updateRecipes() {
         console.warn('Filtre inconnu : ' + name)
       }
     }
-    result
-      ? recipeCards[recipe.id].classList.remove('hidden')
-      : recipeCards[recipe.id].classList.add('hidden')
+    if (result) recipesFiltered.push(recipe)
   })
+}
+
+function updateCards() {
+  recipes.forEach((recipe) => recipeCards[recipe.id].classList.add('hidden'))
+  recipesFiltered.forEach((recipe) =>
+    recipeCards[recipe.id].classList.remove('hidden')
+  )
 }
