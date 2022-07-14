@@ -23,11 +23,15 @@ const tags = {
 let tagsResult = {} // Tags existant dans la recherche
 let tagsFiltered = {} // Tags restants après le filterage par tags
 
-document.querySelector('.filters__tags').addEventListener('click', (e) => {
+const filtersTags = document.querySelector('.filters__tags')
+const dropdowns = document.querySelectorAll('.dropdown')
+const searchInput = document.querySelector('#searchInput')
+
+filtersTags.addEventListener('click', (e) => {
   if (e.target.classList.contains('filters__tag')) removeTag(e.target)
 })
 
-document.querySelectorAll('.dropdown').forEach((dropdown) => {
+dropdowns.forEach((dropdown) => {
   const input = dropdown.querySelector('input')
 
   /* TAGS */
@@ -44,6 +48,10 @@ document.querySelectorAll('.dropdown').forEach((dropdown) => {
   input.addEventListener('input', () => {
     updateDropdownFromInput(input)
   })
+})
+
+searchInput.addEventListener('input', () => {
+  if (searchInput.value.length > 2) search(searchInput.value)
 })
 
 async function init() {
@@ -156,16 +164,17 @@ function addTag(tagElement) {
 
   updateRecipesFiltered()
   updateTagsFiltered()
-  updateCards()
+  displayCards()
 }
 
 function removeTag(tagElement) {
   const tagName = normalize(tagElement.innerHTML)
   delete filters[tagName]
   removeElement(tagElement)
+
   updateRecipesFiltered()
   updateTagsFiltered()
-  updateCards()
+  displayCards()
 }
 
 function updateTagsResult() {
@@ -227,7 +236,7 @@ function updateRecipesFiltered() {
   })
 }
 
-function updateCards() {
+function displayCards() {
   recipes.forEach((recipe) => recipeCards[recipe.id].classList.add('hidden'))
   recipesFiltered.forEach((recipe) =>
     recipeCards[recipe.id].classList.remove('hidden')
