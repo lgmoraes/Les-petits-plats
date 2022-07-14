@@ -6,12 +6,20 @@ export function getNodeIndexIn(node, nodes) {
   return Array.from(nodes).indexOf(node)
 }
 
+export function removeElement(el) {
+  el.parentElement.removeChild(el)
+}
+
 export function minmax(n, min, max) {
   return Math.min(Math.max(n, min), max)
 }
 
-export function removeElement(el) {
-  el.parentElement.removeChild(el)
+export function isEmpty(arg) {
+  const type = typeof arg
+
+  if (type === 'object') return Object.entries(arg).length === 0
+  else if (type === 'string') return arg.length === 0
+  else return arg
 }
 
 export function normalize(str) {

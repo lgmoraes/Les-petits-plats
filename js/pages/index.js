@@ -84,6 +84,10 @@ export function getData() {
   return data
 }
 
+function search(str) {
+  console.log('SEARCH ' + str)
+}
+
 /* DROPDOWN */
 function toggleDropdown(el) {
   const currentExpanded = document.querySelector('.dropdown.expanded')
