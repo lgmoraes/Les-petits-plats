@@ -8,8 +8,8 @@ init()
 
 let data
 const recipes = [] // Liste de toutes les recettes
-let recipesResult = {} // Recettes correspondants à la recherche
-let recipesFiltered = {} // recipesResult filtré par tags
+let recipesResult = [] // Recettes correspondants à la recherche
+let recipesFiltered = [] // recipesResult filtré par tags
 const recipeCards = {} // Associe l'id d'une recette avec sa recipeCard
 
 const filters = {} // Tags appliqués
@@ -20,7 +20,6 @@ const tags = {
   appliances: {},
   ustensils: {},
 }
-let tagsResult = {} // Tags existant dans la recherche
 let tagsFiltered = {} // Tags restants après le filterage par tags
 
 const filtersTags = document.querySelector('.filters__tags')
@@ -52,6 +51,7 @@ dropdowns.forEach((dropdown) => {
 
 searchInput.addEventListener('input', () => {
   if (searchInput.value.length > 2) search(searchInput.value)
+  else emptySearch()
 })
 
 async function init() {
@@ -65,7 +65,6 @@ async function init() {
   recipesFiltered = Object.assign([], recipes)
 
   Object.assign(tags, getTagsFromRecipes(recipes))
-  tagsResult = Object.assign({}, tags)
   tagsFiltered = Object.assign({}, tags)
 
   /* CARDS */
@@ -84,8 +83,37 @@ export function getData() {
   return data
 }
 
+/* Effectue une recherche de recette en cherchant la chaine dans le titre, les ingrédients ou la description */
 function search(str) {
-  console.log('SEARCH ' + str)
+  recipesResult = []
+  str = normalize(str)
+
+  recipes.forEach((recipe) => {
+    let match = false
+
+    if (normalize(recipe.name).indexOf(str) !== -1) match = true
+    else if (
+      recipe.ingredients.find(
+        (i) => normalize(i.ingredient).indexOf(str) !== -1
+      )
+    )
+      match = true
+    else if (recipe.description.toLowerCase().indexOf(str.toLowerCase()) !== -1)
+      match = true
+
+    if (match) recipesResult.push(recipe)
+  })
+
+  updateRecipesFiltered()
+  updateTags()
+  displayCards()
+}
+
+function emptySearch() {
+  recipesResult = Object.assign([], recipes)
+  updateRecipesFiltered()
+  updateTags()
+  displayCards()
 }
 
 /* DROPDOWN */
@@ -167,7 +195,7 @@ function addTag(tagElement) {
   filters[value] = { type }
 
   updateRecipesFiltered()
-  updateTagsFiltered()
+  updateTags()
   displayCards()
 }
 
@@ -177,16 +205,11 @@ function removeTag(tagElement) {
   removeElement(tagElement)
 
   updateRecipesFiltered()
-  updateTagsFiltered()
+  updateTags()
   displayCards()
 }
 
-function updateTagsResult() {
-  tagsResult = Object.assign({}, getTagsFromRecipes(recipesResult))
-  updateTagsFiltered()
-}
-
-function updateTagsFiltered() {
+function updateTags() {
   tagsFiltered = Object.assign({}, getTagsFromRecipes(recipesFiltered))
   updateDropdowns()
 }
@@ -241,7 +264,14 @@ function updateRecipesFiltered() {
 }
 
 function displayCards() {
+  const emptyText = document.querySelector('.cards__emptyText')
+
   recipes.forEach((recipe) => recipeCards[recipe.id].classList.add('hidden'))
+
+  recipesFiltered.length > 0
+    ? emptyText.classList.add('hidden')
+    : emptyText.classList.remove('hidden')
+
   recipesFiltered.forEach((recipe) =>
     recipeCards[recipe.id].classList.remove('hidden')
   )
