@@ -1,16 +1,21 @@
 @use '../utils/' as *;
 
 .cards {
+  .hidden {
+    display: none;
+  }
+
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 30px;
+
+  &__emptyText {
+    width: 100%;
+    text-align: center;
+  }
 }
 .card {
-  &.hidden {
-    display: none;
-  }
-
   width: $card-width;
   border: none;
   flex-grow: 1;

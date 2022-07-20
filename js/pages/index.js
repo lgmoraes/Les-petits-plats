@@ -8,8 +8,8 @@ init()
 
 let data
 const recipes = [] // Liste de toutes les recettes
-let recipesResult = {} // Recettes correspondants à la recherche
-let recipesFiltered = {} // recipesResult filtré par tags
+let recipesResult = [] // Recettes correspondants à la recherche
+let recipesFiltered = [] // recipesResult filtré par tags
 const recipeCards = {} // Associe l'id d'une recette avec sa recipeCard
 
 const filters = {} // Tags appliqués
@@ -20,7 +20,6 @@ const tags = {
   appliances: {},
   ustensils: {},
 }
-let tagsResult = {} // Tags existant dans la recherche
 let tagsFiltered = {} // Tags restants après le filterage par tags
 
 const filtersTags = document.querySelector('.filters__tags')
@@ -52,6 +51,7 @@ dropdowns.forEach((dropdown) => {
 
 searchInput.addEventListener('input', () => {
   if (searchInput.value.length > 2) search(searchInput.value)
+  else emptySearch()
 })
 
 async function init() {
@@ -65,7 +65,6 @@ async function init() {
   recipesFiltered = Object.assign([], recipes)
 
   Object.assign(tags, getTagsFromRecipes(recipes))
-  tagsResult = Object.assign({}, tags)
   tagsFiltered = Object.assign({}, tags)
 
   /* CARDS */
@@ -84,8 +83,42 @@ export function getData() {
   return data
 }
 
+/* Effectue une recherche de recette en cherchant la chaine dans le titre, les ingrédients ou la description */
 function search(str) {
-  console.log('SEARCH ' + str)
+  recipesResult = []
+  str = normalize(str)
+
+  for (let i = 0; i < recipes.length; i++) {
+    const recipe = recipes[i]
+    let match = false
+
+    if (normalize(recipe.name).indexOf(str) !== -1) match = true
+    else if (findIngredient(recipe.ingredients, str)) match = true
+    else if (recipe.description.toLowerCase().indexOf(str.toLowerCase()) !== -1)
+      match = true
+
+    if (match) recipesResult.push(recipe)
+  }
+
+  updateRecipesFiltered()
+  updateTags()
+  displayCards()
+}
+
+function findIngredient(ingredients, searchValue) {
+  for (let i = 0; i < ingredients.length; i++) {
+    const ingredient = ingredients[i]
+    if (normalize(ingredient.ingredient).indexOf(searchValue) !== -1)
+      return true
+  }
+  return false
+}
+
+function emptySearch() {
+  recipesResult = Object.assign([], recipes)
+  updateRecipesFiltered()
+  updateTags()
+  displayCards()
 }
 
 /* DROPDOWN */
@@ -167,7 +200,7 @@ function addTag(tagElement) {
   filters[value] = { type }
 
   updateRecipesFiltered()
-  updateTagsFiltered()
+  updateTags()
   displayCards()
 }
 
@@ -177,16 +210,11 @@ function removeTag(tagElement) {
   removeElement(tagElement)
 
   updateRecipesFiltered()
-  updateTagsFiltered()
+  updateTags()
   displayCards()
 }
 
-function updateTagsResult() {
-  tagsResult = Object.assign({}, getTagsFromRecipes(recipesResult))
-  updateTagsFiltered()
-}
-
-function updateTagsFiltered() {
+function updateTags() {
   tagsFiltered = Object.assign({}, getTagsFromRecipes(recipesFiltered))
   updateDropdowns()
 }
@@ -198,15 +226,20 @@ function getTagsFromRecipes(recipes) {
     ustensils: {},
   }
 
-  recipes.forEach((recipe) => {
-    recipe.ingredients.forEach((ing) => {
+  for (let i = 0; i < recipes.length; i++) {
+    const recipe = recipes[0]
+
+    for (let j = 0; j < recipe.ingredients.length; j++) {
+      const ing = recipe.ingredients[j]
       tags.ingredients[normalize(ing.ingredient)] = ucfirst(ing.ingredient)
-    })
-    recipe.ustensils.forEach(
-      (ust) => (tags.ustensils[normalize(ust)] = ucfirst(ust))
-    )
+    }
+    for (let j = 0; j < recipe.ustensils.length; j++) {
+      const ust = recipe.ustensils[j]
+      tags.ustensils[normalize(ust)] = ucfirst(ust)
+    }
+
     tags.appliances[normalize(recipe.appliance)] = ucfirst(recipe.appliance)
-  })
+  }
 
   return tags
 }
@@ -241,7 +274,14 @@ function updateRecipesFiltered() {
 }
 
 function displayCards() {
+  const emptyText = document.querySelector('.cards__emptyText')
+
   recipes.forEach((recipe) => recipeCards[recipe.id].classList.add('hidden'))
+
+  recipesFiltered.length > 0
+    ? emptyText.classList.add('hidden')
+    : emptyText.classList.remove('hidden')
+
   recipesFiltered.forEach((recipe) =>
     recipeCards[recipe.id].classList.remove('hidden')
   )
