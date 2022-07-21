@@ -99,7 +99,7 @@ function search(str) {
 
     if (normalize(recipe.name).indexOf(str) !== -1) match = true
     else if (findIngredient(recipe.ingredients, str)) match = true
-    else if (recipe.description.toLowerCase().indexOf(str.toLowerCase()) !== -1)
+    else if (normalize(recipe.description).indexOf(str.toLowerCase()) !== -1)
       match = true
 
     if (match) recipesResult.push(recipe)
