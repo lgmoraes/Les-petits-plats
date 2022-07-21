@@ -98,7 +98,7 @@ function search(str) {
       )
     )
       match = true
-    else if (recipe.description.toLowerCase().indexOf(str.toLowerCase()) !== -1)
+    else if (normalize(recipe.description).indexOf(str.toLowerCase()) !== -1)
       match = true
 
     if (match) recipesResult.push(recipe)
