@@ -2,7 +2,12 @@ import '../../scss/main.scss'
 import API from '../api'
 import Recipe from '../models/Recipe'
 import RecipeCard from '../templates/RecipeCard'
-import { normalize, ucfirst, removeElement } from '../utils/functions'
+import {
+  normalize,
+  ucfirst,
+  removeElement,
+  getExecutionTime,
+} from '../utils/functions'
 
 init()
 
@@ -276,3 +281,25 @@ function displayCards() {
     recipeCards[recipe.id].classList.remove('hidden')
   )
 }
+
+function benchmark() {
+  const time = getExecutionTime(() => {
+    for (let i = 0; i < 1000; i++) {
+      search('fraise')
+      search('noix')
+      search('pomme')
+      search('pain')
+      search('citron')
+
+      search('Découper')
+      search('Etaler')
+      search('mélanger')
+    }
+  })
+
+  console.log("TEST TERMINE. Temps d'execution : " + time)
+}
+
+document.querySelector('.input-group-append').addEventListener('click', () => {
+  benchmark()
+})
