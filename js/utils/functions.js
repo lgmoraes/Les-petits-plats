@@ -97,3 +97,9 @@ export function latinize(str) {
 export function ucfirst(str) {
   return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase()
 }
+
+export function getExecutionTime(func) {
+  const start = Date.now()
+  func()
+  return Date.now() - start
+}
