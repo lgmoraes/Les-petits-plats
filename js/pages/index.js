@@ -232,7 +232,7 @@ function getTagsFromRecipes(recipes) {
   }
 
   for (let i = 0; i < recipes.length; i++) {
-    const recipe = recipes[0]
+    const recipe = recipes[i]
 
     for (let j = 0; j < recipe.ingredients.length; j++) {
       const ing = recipe.ingredients[j]
